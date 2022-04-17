@@ -1,0 +1,8 @@
+prefix=/home/vimolman/ppl_follower1_ws/install
+
+Name: simplify_description
+Description: Description of simplify_description
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
