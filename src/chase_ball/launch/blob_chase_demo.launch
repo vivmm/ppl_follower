@@ -1,0 +1,20 @@
+
+<launch>
+
+<!--<include file="$(find simplify_description)/launch/gazebo.launch"/>
+
+<include file="$(find raspicam_node)/launch/camerav2_320x240.launch">
+ <arg name="enable_raw" value="true" />
+</include>
+
+
+<node pkg="chase_ball" name="dk_llc_3" type="low_level_control_blob_chase.py" output="screen" >
+</node>
+-->
+<node pkg="opencv" name="dk_find" type="find_ball.py" output="screen" >
+</node>
+
+<node pkg="chase_ball" name="dk_chase" type="chase_the_ball.py" output="screen" >
+</node>
+
+</launch>
