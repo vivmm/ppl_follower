@@ -15,7 +15,6 @@
     <geometry>
       <mesh filename="package://body_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="steel_satin"/>
   </visual>
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -24,5 +23,8 @@
     </geometry>
   </collision>
 </link>
+<gazebo reference="base_link">
+  <material>Gazebo/Blue</material>
+</gazebo>
 
 </robot>
