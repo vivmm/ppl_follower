@@ -184,5 +184,4 @@ def main(args):
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    #rospy.init_node('find_ball')
     main(sys.argv)
