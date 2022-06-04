@@ -78,23 +78,23 @@ def  blob_detect(image,                  #-- The frame (cv standard)
          
         # Change thresholds
         params.minThreshold = 0;
-        params.maxThreshold = 100;
+        params.maxThreshold = 255;
          
         # Filter by Area.
-        params.filterByArea = True
+        params.filterByArea = False
         params.minArea = 30
         params.maxArea = 20000
          
         # Filter by Circularity
-        params.filterByCircularity = True
+        params.filterByCircularity = False
         params.minCircularity = 0.1
          
         # Filter by Convexity
-        params.filterByConvexity = True
+        params.filterByConvexity = False
         params.minConvexity = 0.5
          
         # Filter by Inertia
-        params.filterByInertia =True
+        params.filterByInertia = False
         params.minInertiaRatio = 0.5
          
     else:
