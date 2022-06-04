@@ -1,0 +1,30 @@
+<launch>
+  <param name="/use_sim_time" value="true" />
+
+  <!-- start world -->  
+  <node name="gazebo" pkg="gazebo_ros" type="gazebo" 
+   args="$(find simplify_description)/worlds/empty.world" respawn="false" output="screen" />
+
+  <!-- start gui -->
+  <!-- <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/> -->
+
+  <!-- include our robots -->
+  <param name="robot_description"
+  command="$(find xacro)/xacro $(find simplify_description)/urdf/simplify.xacro" />
+
+  <param name="person_description"
+  command="$(find xacro)/xacro $(find body_description)/urdf/body.xacro" />
+    
+
+  <!-- BEGIN ROBOT 1-->
+  <node name='onebot_spawn' pkg="gazebo_ros" type="spawn_model" output="screen"
+   args="-urdf -param robot_description -model SIMPLIFYWALKIE -x -2 -y -0.5 -z 0"/>
+
+  <!-- BEGIN ROBOT 2-->
+  <node name='human_spawn' pkg="gazebo_ros" type="spawn_model" output="screen"
+   args="-urdf -param person_description -model PERSON1 -x -1 -y -0.5 -z 0"/>
+
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" args="-rate 20"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+</launch>
