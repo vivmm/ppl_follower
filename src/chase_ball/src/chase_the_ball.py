@@ -14,7 +14,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 
-K_LAT_DIST_TO_STEER     = 2.0
+K_LAT_DIST_TO_STEER     = 0.1
 
 def saturate(value, min, max):
     if value <= min: return(min)
@@ -60,11 +60,11 @@ class ChaseBall():
         
         if self.is_detected:
             #--- Apply steering, proportional to how close is the object
-            steer_action   =-K_LAT_DIST_TO_STEER*self.blob_x
-            steer_action   = saturate(steer_action, -1.5, 1.5)
+            steer_action   = K_LAT_DIST_TO_STEER*self.blob_x
+            steer_action   = saturate(steer_action, -0.5, 0.5)
             rospy.loginfo("Steering command %.2f"%steer_action) 
-            throttle_action = 1.0 
-            
+            throttle_action = 0.0
+
         return (steer_action, throttle_action)
         
     def run(self):
@@ -73,10 +73,12 @@ class ChaseBall():
         rate = rospy.Rate(5)
 
         while not rospy.is_shutdown():
-            #-- Get the control action
-            steer_action, throttle_action    = self.get_control_action() 
+            #-- Get the control action 
+            # !!! one wheel of robot is flipped
+            throttle_action, steer_action    = self.get_control_action() 
             
-            rospy.loginfo("Steering = %3.1f"%(steer_action))
+            rospy.loginfo("linear x = %3.1f"%(steer_action))
+            rospy.loginfo("angular z = %3.1f"%(throttle_action))
             
             #-- update the message
             self._message.linear.x  = throttle_action
@@ -91,5 +93,5 @@ if __name__ == "__main__":
 
     rospy.init_node('chase_ball')
     
-    chase_ball     = ChaseBall()
+    chase_ball = ChaseBall()
     chase_ball.run()            
