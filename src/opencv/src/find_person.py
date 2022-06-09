@@ -57,26 +57,32 @@ class SimpleColorDetector:
         
         
     def callback(self,data):
-        #--- Assuming image is 320x240
         try:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             print(e)
 
-        (rows,cols,channels) = cv_image.shape
-        if cols > 60 and rows > 60 :
+        if cv_image is not None :
+            (rows,cols,channels) = cv_image.shape
             #--- Detect blobs
-            cv_image, x, y, w, h = simple_detect_bbox(cv_image)
-            if x is not None:
-                # calculate delta x, y
-                center_x = 0.5*rows
-                center_y = 0.5*cols
-                delta_x = (x - center_x)/center_x
-                delta_y = -1 * (y - center_y)/center_y
+            cv_image, x, y, w, h = simple_detect_bbox(cv_image, "blue")
 
-                self.blob_point.x = delta_x
-                self.blob_point.y = delta_y
-                self.blob_pub.publish(self.blob_point) 
+            # calculate delta x, y
+            delta_x = ((x+w/2) - cols / 2)
+            delta_y = -1 * ((y+h/2) - rows / 2)
+
+            self.blob_point.x = delta_x
+            self.blob_point.y = delta_y
+            self.blob_pub.publish(self.blob_point)
+
+            # visualize
+            # center of object
+            cv2.circle(cv_image, (int(x+w/2), int(y+h/2)), 7, (0, 0, 255), -1)
+            # center of image
+            cv2.circle(cv_image, (int(cols/2), int(rows/2)), 7, (255, 0, 0), -1)
+            cv2.putText(cv_image, "({},{})".format(delta_x, delta_y), (x, y),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.0,
+                    (0, 0, 255))
             
             try:
                 self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
@@ -85,7 +91,6 @@ class SimpleColorDetector:
                     
             fps = 1.0/(time.time()-self._t0)
             self._t0 = time.time()
-            
 
 if __name__ == '__main__':
     

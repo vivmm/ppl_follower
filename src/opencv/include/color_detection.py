@@ -2,11 +2,21 @@
 import numpy as np
 import cv2
 
-def simple_detect_bbox(img):
+def simple_detect_bbox(img, color="blue"):
     # simple object detection using color
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lower_bound = np.array([94, 80, 2])  # red [136, 87, 111], green [25, 52, 72], blue [94, 80, 2]
-    upper_bound = np.array([120, 255, 255])  # red [180, 255, 255], green [102, 255, 255], blue [120, 255, 255]
+    # lower_bound : red [136, 87, 111], green [25, 52, 72], blue [94, 80, 2]
+    # upper_bound : red [180, 255, 255], green [102, 255, 255], [120, 255, 255]
+    if color == "red":
+        lower_bound = np.array([136, 87, 111])
+        upper_bound = np.array([180, 255, 255])
+    elif color == "blue":
+        lower_bound = np.array([94, 80, 2])
+        upper_bound = np.array([120, 255, 255])
+    elif color == "green":
+        lower_bound = np.array([25, 52, 72])
+        upper_bound = np.array([102, 255, 255])
+
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
 
     # define kernel size
@@ -15,23 +25,26 @@ def simple_detect_bbox(img):
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     # Find contours from the mask
-    items = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    items = cv2.findContours(
+        mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # print(contours)
     contours = items[0] if len(items) == 2 else items[1]
 
-    x, y, w, h = None, None, None, None
-    # loop over the contours
-    for c in contours:
+    x, y, w, h = 0, 0, 0, 0
+    # find biggest contours
+    if len(contours) != 0:
+        c = max(contours, key = cv2.contourArea)
         area = cv2.contourArea(c)
         if (area > 300):
             x, y, w, h = cv2.boundingRect(c)
             img = cv2.rectangle(img, (x, y),
-                                       (x + w, y + h),
-                                       (0, 0, 255), 2)
+                                (x + w, y + h),
+                                (0, 0, 255), 2)
 
-            cv2.putText(img, "object", (x, y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.0,
-                        (0, 0, 255))
+            # cv2.putText(img, "object", (x, y),
+            #             cv2.FONT_HERSHEY_SIMPLEX, 1.0,
+            #             (0, 0, 255))
+                        
     return img, x, y, w, h
 
 if __name__ == "__main__":

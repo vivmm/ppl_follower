@@ -14,7 +14,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 
-K_LAT_DIST_TO_STEER     = 0.1
+K_LAT_DIST_TO_STEER     = 0.001
 
 def saturate(value, min, max):
     if value <= min: return(min)
@@ -75,10 +75,10 @@ class ChaseBall():
         while not rospy.is_shutdown():
             #-- Get the control action 
             # !!! one wheel of robot is flipped
-            throttle_action, steer_action    = self.get_control_action() 
+            steer_action, throttle_action   = self.get_control_action() 
             
-            rospy.loginfo("linear x = %3.1f"%(steer_action))
-            rospy.loginfo("angular z = %3.1f"%(throttle_action))
+            rospy.loginfo("linear x = %3.1f"%(throttle_action))
+            rospy.loginfo("angular z = %3.1f"%(steer_action))
             
             #-- update the message
             self._message.linear.x  = throttle_action
