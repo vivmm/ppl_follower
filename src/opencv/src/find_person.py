@@ -72,26 +72,27 @@ class SimpleColorDetector:
             #--- Detect blobs
             cv_image, x, y, w, h = simple_detect_bbox(cv_image, "blue")
 
-            # calculate delta x, y
-            delta_x = ((x+w/2) - cols / 2)
-            delta_y = -1 * ((y+h/2) - rows / 2)
+            if x is not None:
+                # calculate delta x, y
+                delta_x = ((x+w/2) - cols / 2)
+                delta_y = -1 * ((y+h/2) - rows / 2)
 
-            self.abs_blob_point.x = x+w/2
-            self.abs_blob_point.y = y+h/2
-            self.abs_blob_pub.publish(self.abs_blob_point)
+                self.abs_blob_point.x = x+w/2
+                self.abs_blob_point.y = y+h/2
+                self.abs_blob_pub.publish(self.abs_blob_point)
 
-            self.rel_blob_point.x = delta_x
-            self.rel_blob_point.y = delta_y
-            self.rel_blob_pub.publish(self.rel_blob_point)
+                self.rel_blob_point.x = delta_x
+                self.rel_blob_point.y = delta_y
+                self.rel_blob_pub.publish(self.rel_blob_point)
 
-            # visualize
-            # center of object
-            cv2.circle(cv_image, (int(x+w/2), int(y+h/2)), 7, (0, 0, 255), -1)
-            # center of image
-            cv2.circle(cv_image, (int(cols/2), int(rows/2)), 7, (255, 0, 0), -1)
-            cv2.putText(cv_image, "({},{})".format(delta_x, delta_y), (x, y),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.0,
-                    (0, 0, 255))
+                # visualize
+                # center of object
+                cv2.circle(cv_image, (int(x+w/2), int(y+h/2)), 7, (0, 0, 255), -1)
+                # center of image
+                cv2.circle(cv_image, (int(cols/2), int(rows/2)), 7, (255, 0, 0), -1)
+                cv2.putText(cv_image, "({},{})".format(delta_x, delta_y), (x, y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.0,
+                        (0, 0, 255))
             
             try:
                 self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))

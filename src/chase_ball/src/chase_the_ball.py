@@ -69,7 +69,7 @@ class ChaseBall():
         self.rel_blob_x = message.x
         self.rel_blob_y = message.y
         self._time_detected = time.time()
-        # rospy.loginfo("Ball detected: %.1f  %.1f "%(self.rel_blob_x, self.blob_y))
+        rospy.loginfo("Ball detected: %.1f  %.1f "%(self.rel_blob_x, self.rel_blob_y))
 
     def abs_update_ball(self, message):
         self.abs_blob_x = message.x /1.5  #in camera/depth res
@@ -92,10 +92,13 @@ class ChaseBall():
             rospy.loginfo("Steering command %.2f"%steer_action)
             if self.result[2] > 1000:
                 throttle_action = self.result[2]*K_LAT_DIST_TO_THROTTLE
-                throttle_action = saturate(throttle_action, 0.1, 0.2)
+                throttle_action = saturate(throttle_action, 0, 0.2)
                 rospy.loginfo("Throttling command %.2f"%throttle_action)
             else:
                 throttle_action = 0.0
+        else:
+            steer_action    = 0.0
+            throttle_action = 0.0
 
         return (steer_action, throttle_action)
         

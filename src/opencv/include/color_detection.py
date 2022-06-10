@@ -44,7 +44,8 @@ def simple_detect_bbox(img, color="blue"):
             # cv2.putText(img, "object", (x, y),
             #             cv2.FONT_HERSHEY_SIMPLEX, 1.0,
             #             (0, 0, 255))
-                        
+    else:
+        return img, None, None, None, None  
     return img, x, y, w, h
 
 if __name__ == "__main__":
