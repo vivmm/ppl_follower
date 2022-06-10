@@ -17,7 +17,8 @@ SUBSCRIBES TO:
     
 PUBLISHES TO:
     /blob/image_blob : image with detected blob and search window
-    /blob/point_blob : blob position in adimensional values wrt. camera frame
+    /blob/rel_point_blob : blob position in adimensional values wrt. camera frame
+    /blob/abs_point_blob : absolute blob position
 
 """
 
@@ -44,12 +45,16 @@ class SimpleColorDetector:
     def __init__(self):
         
         self._t0 = time.time()
-        self.blob_point = Point()
+        self.rel_blob_point = Point()
+        self.abs_blob_point = Point()
     
         print (">> Publishing image to topic image_blob")
         self.image_pub = rospy.Publisher("/blob/image_blob",Image,queue_size=1)
-        print (">> Publishing position to topic point_blob")
-        self.blob_pub  = rospy.Publisher("/blob/point_blob",Point,queue_size=1)
+        print (">> Publishing position to topic rel_point_blob")
+        self.rel_blob_pub  = rospy.Publisher("/blob/rel_point_blob",Point,queue_size=1)
+        print (">> Publishing position to topic abs_point_blob")
+        self.abs_blob_pub  = rospy.Publisher("/blob/abs_point_blob",Point,queue_size=1)
+
 
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("/camera/color/image_raw",Image,self.callback)
@@ -71,9 +76,13 @@ class SimpleColorDetector:
             delta_x = ((x+w/2) - cols / 2)
             delta_y = -1 * ((y+h/2) - rows / 2)
 
-            self.blob_point.x = delta_x
-            self.blob_point.y = delta_y
-            self.blob_pub.publish(self.blob_point)
+            self.abs_blob_point.x = x+w/2
+            self.abs_blob_point.y = y+h/2
+            self.abs_blob_pub.publish(self.abs_blob_point)
+
+            self.rel_blob_point.x = delta_x
+            self.rel_blob_point.y = delta_y
+            self.rel_blob_pub.publish(self.rel_blob_point)
 
             # visualize
             # center of object
